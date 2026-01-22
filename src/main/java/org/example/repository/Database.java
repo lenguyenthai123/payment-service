@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Database {
-    // Customer -> Map <BillId, Bill>
+    public static Customer DEMO_CUSTOMER = new Customer("ADMIN@gmail.com", "admin");
+
     public static Map<Customer, Map<String, Bill>> BILLS = new ConcurrentHashMap<>();
 
     public static Map<Customer, Map<String, PaymentTransaction>> TRANSACTIONS = new ConcurrentHashMap<>();

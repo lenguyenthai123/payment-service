@@ -16,17 +16,20 @@ public class Bill extends EntityWithId {
 
     private BillState state;
 
-    private String providerId;
+    private String provider;
 
     private String userId;
 
-    public Bill(DomainType type, Double amount, Date dueDate, BillState state, String providerId, String userId) {
+    private Date scheduledDate;
+
+    public Bill(DomainType type, Double amount, Date dueDate, BillState state, String provider, String userId, Date scheduledDate) {
         this.type = type;
         this.amount = amount;
         this.dueDate = dueDate;
         this.state = state;
-        this.providerId = providerId;
+        this.provider = provider;
         this.userId = userId;
+        this.scheduledDate = scheduledDate;
     }
 
     public DomainType getType() {
@@ -61,12 +64,12 @@ public class Bill extends EntityWithId {
         this.state = state;
     }
 
-    public String getProviderId() {
-        return providerId;
+    public String getProvider() {
+        return provider;
     }
 
-    public void setProviderId(String providerId) {
-        this.providerId = providerId;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
     public String getUserId() {
@@ -75,5 +78,21 @@ public class Bill extends EntityWithId {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public Boolean isPaid() {
+        return this.state == BillState.PAID;
+    }
+
+    public Date getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(Date scheduledDate) {
+        this.scheduledDate = scheduledDate;
+    }
+
+    public boolean isScheduled() {
+        return scheduledDate != null;
     }
 }

@@ -11,10 +11,7 @@ import org.example.service.PaymentService;
 import org.example.service.WalletService;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -36,21 +33,24 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Not found a bill with id " + billId));
 
-        if (bill.getState() == BillState.PAID) {
-            throw new IllegalStateException("Bill " + billId + " is already paid");
+        synchronized (bill) {
+            if (bill.getState() == BillState.PAID) {
+                throw new IllegalStateException("Bill " + billId + " is already paid");
+            }
+
+            walletService.charge(customer, bill.getAmount());
+            bill.setState(BillState.PAID);
+
+            PaymentTransaction transaction = new PaymentTransaction(
+                    bill.getAmount(),
+                    LocalDate.now(),
+                    PaymentState.PROCESSED,
+                    bill.getId()
+            );
+
+            saveTransaction(customer, transaction);
+            return true;
         }
-
-        walletService.charge(customer, bill.getAmount());
-        bill.setState(BillState.PAID);
-
-        PaymentTransaction transaction = new PaymentTransaction(
-                bill.getAmount(),
-                LocalDate.now(),
-                PaymentState.PROCESSED,
-                bill.getId()
-        );
-        saveTransaction(customer, transaction);
-        return true;
     }
 
     @Override
@@ -98,8 +98,11 @@ public class PaymentServiceImpl implements PaymentService {
         if (customer == null) {
             throw new IllegalArgumentException("Customer must not be null");
         }
-        Map<String, PaymentTransaction> transactions = Database.TRANSACTIONS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>());
-        return transactions.values().stream().toList();
+        return new ArrayList<>(
+                Database.TRANSACTIONS
+                        .getOrDefault(customer, Map.of())
+                        .values());
+
     }
 
     private void saveTransaction(Customer customer, PaymentTransaction transaction) {

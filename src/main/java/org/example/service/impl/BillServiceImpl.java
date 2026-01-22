@@ -5,6 +5,7 @@ import org.example.entity.Customer;
 import org.example.repository.Database;
 import org.example.service.BillService;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,9 +48,9 @@ public class BillServiceImpl implements BillService {
     }
 
     @Override
-    public List<Bill> search(Customer customer, String searchString) {
+    public List<Bill> searchByProvider(Customer customer, String provider) {
         validateCustomer(customer);
-        return Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>()).values().stream().filter(b -> (searchString == null) || (Objects.equals(searchString, b.getProviderId()))).toList();
+        return Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>()).values().stream().filter(b -> (provider == null) || (Objects.equals(provider, b.getProvider()))).toList();
     }
 
     @Override
@@ -58,6 +59,20 @@ public class BillServiceImpl implements BillService {
         Map<String, Bill> customerBills = Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>());
         return Optional.ofNullable(customerBills.get(billId));
     }
+
+    @Override
+    public List<Bill> listDueBills(Customer customer) {
+        Date today = new Date();
+
+        return Database.BILLS
+                .getOrDefault(customer, Map.of())
+                .values()
+                .stream()
+                .filter(b -> !b.isPaid())
+                .filter(b -> !b.getDueDate().after(today))
+                .toList();
+    }
+
 
     private void validateBill(Bill bill) {
         if (bill == null) {

@@ -1,9 +1,22 @@
 package org.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    static void main() {
 
+import org.example.cli.CommandHandler;
+import org.example.cli.CommandLoop;
+import org.example.context.ApplicationContext;
+import org.example.cronjob.ScheduledPaymentEngine;
+import org.example.mock.MockDataInitializer;
+
+public class Main {
+
+    public static void main(String[] args) {
+        MockDataInitializer.init();
+        ApplicationContext ctx = new ApplicationContext();
+
+        CommandHandler handler = new CommandHandler(ctx);
+        CommandLoop loop = new CommandLoop(handler);
+
+        loop.run();
+        ctx.shutdown();
     }
 }
