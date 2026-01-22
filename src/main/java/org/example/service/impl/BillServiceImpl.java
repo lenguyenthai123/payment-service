@@ -5,10 +5,7 @@ import org.example.entity.Customer;
 import org.example.repository.Database;
 import org.example.service.BillService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BillServiceImpl implements BillService {
@@ -35,7 +32,6 @@ public class BillServiceImpl implements BillService {
         validateCustomer(customer);
 
         Map<String, Bill> customerBills = Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>());
-
         customerBills.remove(billId);
     }
 
@@ -54,6 +50,13 @@ public class BillServiceImpl implements BillService {
     public List<Bill> search(Customer customer, String searchString) {
         validateCustomer(customer);
         return Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>()).values().stream().filter(b -> (searchString == null) || (Objects.equals(searchString, b.getProviderId()))).toList();
+    }
+
+    @Override
+    public Optional<Bill> find(Customer customer, String billId) {
+        validateCustomer(customer);
+        Map<String, Bill> customerBills = Database.BILLS.computeIfAbsent(customer, k -> new ConcurrentHashMap<>());
+        return Optional.ofNullable(customerBills.get(billId));
     }
 
     private void validateBill(Bill bill) {

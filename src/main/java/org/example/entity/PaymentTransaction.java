@@ -3,16 +3,23 @@ package org.example.entity;
 import org.example.enums.PaymentState;
 import org.example.utils.EntityWithId;
 
-import java.util.Date;
+import java.time.LocalDate;
 
-public class Payment extends EntityWithId {
+public class PaymentTransaction extends EntityWithId {
     private Double amount;
 
-    private Date createdDate;
+    private LocalDate createdDate;
 
     private PaymentState state;
 
     private String billId;
+
+    public PaymentTransaction(Double amount, LocalDate createdDate, PaymentState state, String billId) {
+        this.amount = amount;
+        this.createdDate = createdDate;
+        this.state = state;
+        this.billId = billId;
+    }
 
     public Double getAmount() {
         return amount;
@@ -22,11 +29,11 @@ public class Payment extends EntityWithId {
         this.amount = amount;
     }
 
-    public Date getCreatedDate() {
+    public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
     }
 

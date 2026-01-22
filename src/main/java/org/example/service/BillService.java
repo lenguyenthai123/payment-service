@@ -4,6 +4,7 @@ import org.example.entity.Bill;
 import org.example.entity.Customer;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BillService {
 
@@ -15,4 +16,5 @@ public interface BillService {
 
     public List<Bill> search(Customer customer, String searchString);
 
+    public Optional<Bill> find(Customer customer, String billId);
 }
