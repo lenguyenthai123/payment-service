@@ -14,7 +14,9 @@ public interface BillService {
 
     public Bill update(Customer customer, Bill bill);
 
-    public List<Bill> search(Customer customer, String searchString);
+    public List<Bill> listDueBills(Customer customer);
+
+    public List<Bill> searchByProvider(Customer customer, String provider);
 
     public Optional<Bill> find(Customer customer, String billId);
 }
